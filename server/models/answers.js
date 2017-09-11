@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var answersSchema = new Schema({
-  author : [{type : Schema.Types.ObjectId, ref : 'User'}],
+  answerAuthor : [{type : Schema.Types.ObjectId, ref : 'User'}],
   content :{
     type : String,
     required : true

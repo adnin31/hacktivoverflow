@@ -5,7 +5,7 @@ var ObjectId = require('mongoose').Types.ObjectId;
 answers = require('../models/answers')
 
 function getAll(req,res){
-  question.find().populate('answers')
+  question.find().populate('answers').populate('author')
   .then(data=>{
     res.send(data)
   })
@@ -32,7 +32,16 @@ function insertData(req,res) {
     })
 
   })
+}
 
+function getOneQuestion(req, res) {
+  question.findOne(req.params.id).populate('answers').populate('author')
+  .then(data=>{
+    res.send(data)
+  })
+  .catch(err => {
+    res.send(err)
+  })
 }
 
 function updateData(req,res){
@@ -110,7 +119,9 @@ function deleteAnswers (req, res) {
           answers.remove(req.body.id)
           .then(removedAnswer=>{
             // res.send(removedAnswer)
+            console.log();
             answerArr.splice(answersIndex,1)
+            console.log(removedAnswer);
             question.update({
               _id: req.params.id
             },{
@@ -123,6 +134,7 @@ function deleteAnswers (req, res) {
               console.log(data);
               res.send('data has been updated with delete')
             })
+            .catch(err=>res.send(err))
           })
           .catch(err=>{
             res.send(err)
