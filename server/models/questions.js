@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var questionSchema = new Schema({
   author : [{type : Schema.Types.ObjectId, ref : 'User'}],
+  question: String,
   content :{
     type : String,
     required : true

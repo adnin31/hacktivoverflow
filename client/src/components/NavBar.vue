@@ -103,7 +103,7 @@ export default {
       username: '',
       password: '',
       email: '',
-      token: null
+      token: localStorage.getItem('token')
     }
   },
   methods: {
@@ -129,6 +129,7 @@ export default {
     logout () {
       localStorage.clear()
       this.token = null
+      this.$store.commit.removeAppToken
     },
     register () {
       var self = this

@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    appToken: 0,
+    appToken: localStorage.getItem('token'),
     allQuestions: ''
   },
   mutations: {
@@ -15,7 +15,11 @@ export const store = new Vuex.Store({
     },
     setAllQuestions (state, payload) {
       state.allQuestions = payload
+    },
+    removeAppToken (state) {
+      state.appToken = null
     }
+
   },
   actions: {
     getAllQuestions ({commit}) {

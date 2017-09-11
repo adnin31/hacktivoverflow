@@ -21,6 +21,7 @@ function insertData(req,res) {
     var newQuestion = new question({
       author : decoded._id,
       content :req.body.content,
+      question: req.body.question
     })
 
     newQuestion.save((err,data)=>{
@@ -35,7 +36,7 @@ function insertData(req,res) {
 }
 
 function getOneQuestion(req, res) {
-  question.findOne(req.params.id).populate('answers').populate('author')
+  question.findOne({_id:req.params.id}).populate('answers').populate('author')
   .then(data=>{
     res.send(data)
   })
@@ -147,4 +148,4 @@ function deleteAnswers (req, res) {
     })
   })
 }
-module.exports = {getAll,insertData,updateData,removeData,addAnswers,deleteAnswers};
+module.exports = {getAll,insertData,updateData,removeData,addAnswers,deleteAnswers,getOneQuestion};

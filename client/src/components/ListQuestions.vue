@@ -1,9 +1,12 @@
 <template lang="html">
   <div class="">
     <div v-for="question in allQuestions" class="panel panel-default">
-      <div class="panel-heading"><a href="#">{{question.content}} </a>  </div>
+      <div class="panel-heading"><router-link :to="'/'+question._id">{{question.question}}</router-link>     </div>
       <div class="panel-body">
-        {{question.author[0].username}}
+        <p>{{question.content}}</p>
+      </div>
+      <div class="panel-footer">
+        <p><span class="glyphicon glyphicon-user"></span> author :  {{question.author[0].username}}</p>
       </div>
     </div>
   </div>
@@ -14,7 +17,7 @@
 export default {
   computed: {
     allQuestions () {
-      return this.$store.state.allQuestions
+      return this.$store.state.allQuestions.reverse()
     }
   },
   created () {

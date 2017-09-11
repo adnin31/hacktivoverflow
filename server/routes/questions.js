@@ -4,6 +4,7 @@ var questions = require('../controllers/questions')
 var auth = require('../helper/auth')
 
 router.get('/', questions.getAll);
+router.get('/:id', questions.getOneQuestion)
 router.post('/', auth.authentikasi ,questions.insertData);
 router.delete('/:id', auth.authentikasi ,questions.removeData);
 
