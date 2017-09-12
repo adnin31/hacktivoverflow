@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="">
     <div v-for="question in allQuestions" class="panel panel-default">
-      <div class="panel-heading"><router-link :to="'/'+question._id">{{question.question}}</router-link>     </div>
+      <div class="panel-heading"><router-link :to="'/'+question._id" @click="getDetailQuestions(questions_id)">{{question.question}}</router-link>     </div>
       <div class="panel-body">
         <p>{{question.content}}</p>
       </div>
@@ -14,10 +14,16 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 export default {
+  methods: {
+    ...mapActions([
+      'getDetailQuestions'
+    ])
+  },
   computed: {
     allQuestions () {
-      return this.$store.state.allQuestions.reverse()
+      return this.$store.state.allQuestions
     }
   },
   created () {
