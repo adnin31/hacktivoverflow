@@ -12,7 +12,7 @@
     </div>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class=""><a href="#">HOME</a></li>
+        <li class=""><router-link :to="'/'"> HOME</router-link></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <form class="navbar-form navbar-left" role="search">
@@ -22,7 +22,7 @@
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
 
-        <li><a v-if="token === null" class="button" data-toggle="modal" data-target="#myModal">Login</a></li>
+        <li><a v-if="token == null" class="button" data-toggle="modal" data-target="#myModal">Login</a></li>
         <li><a v-if="token" class="button" @click="logout" >Logout</a></li>
 
         <div class="modal fade" id="myModal" role="dialog">
@@ -102,8 +102,7 @@ export default {
     return {
       username: '',
       password: '',
-      email: '',
-      token: localStorage.getItem('token')
+      email: ''
     }
   },
   methods: {
@@ -119,7 +118,6 @@ export default {
         } else {
           console.log(res)
           localStorage.setItem('token', res.data)
-          self.token = res.data
           this.$store.commit('setAppToken', res.data)
         }
         self.username = ''
@@ -128,8 +126,7 @@ export default {
     },
     logout () {
       localStorage.clear()
-      this.token = null
-      this.$store.commit.removeAppToken
+      this.$store.commit('removeAppToken')
     },
     register () {
       var self = this
@@ -145,6 +142,11 @@ export default {
         self.email = ''
       })
       .catch(err => console.log(err))
+    }
+  },
+  computed: {
+    token () {
+      return this.$store.state.appToken
     }
   }
 }

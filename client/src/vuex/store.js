@@ -1,24 +1,28 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import jwtDecoded from 'jwt-decode'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    appToken: localStorage.getItem('token'),
+    appToken: null,
     allQuestions: '',
-    detailQuestion: ''
+    detailQuestion: '',
+    parseToken: {}
   },
   mutations: {
     setAppToken (state, payload) {
       state.appToken = payload
+      state.parseToken = jwtDecoded(payload)
     },
     setAllQuestions (state, payload) {
       state.allQuestions = payload.reverse()
     },
     removeAppToken (state) {
       state.appToken = null
+      state.parseToken = {}
     },
     setDetailQuestion (state, payload) {
       state.detailQuestion = payload
@@ -27,19 +31,20 @@ export const store = new Vuex.Store({
   },
   actions: {
     getAllQuestions ({commit}) {
-      console.log('masuk getAllQuestions')
       axios.get('http://localhost:3000/questions')
       .then(res => {
         commit('setAllQuestions', res.data)
       })
       .catch(err => console.log(err))
     },
-    getDetailQuestions (id) {
+    getDetailQuestion (context, id) {
       console.log('masuk detailQuestion')
+      console.log(id)
       axios.get(`http://localhost:3000/questions/${id}`)
       .then(res => {
-        id.commit('')
+        context.commit('setDetailQuestion', res.data)
       })
+      .catch(err => console.log(err))
     }
   }
 })
