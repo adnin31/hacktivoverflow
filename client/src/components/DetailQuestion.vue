@@ -18,7 +18,7 @@
             <p class=""><span class="glyphicon glyphicon-user"></span> author :  {{answer.answerAuthor[0].username}} </p>
             <div v-if="parseToken.username === answer.answerAuthor[0].username" class="col-md-offset-8">
               <button class="btn btn-success edit " type="button" name="button"><span class="glyphicon glyphicon-pencil"></span> </button>
-              <button class="btn btn-danger edit " type="button" name="button"><span class="glyphicon glyphicon-trash"></span> </button>
+              <button class="btn btn-danger edit " type="button" name="button" @click="deleteAnswers(detailQuestion._id,answer._id)"><span class="glyphicon glyphicon-trash"></span> </button>
             </div>
           </div>
         </div>
@@ -60,18 +60,38 @@ export default {
   },
   methods: {
     postAnswers (id) {
-      var self = this
-      axios.post(`http://localhost:3000/questions/${id}/answer`, {
-        content: self.jawaban
-      }, {
+      if (this.parseToken) {
+        var self = this
+        axios.post(`http://localhost:3000/questions/${id}/answer`, {
+          content: self.jawaban
+        }, {
+          headers: {
+            token: this.$store.state.appToken
+          }
+        })
+        .then(data => {
+          console.log(data)
+          self.jawaban = ''
+          this.$store.dispatch('getDetailQuestion', id)
+        })
+      } else {
+        alert('YOU MUST lOGIN')
+        this.jawaban = ''
+      }
+    },
+    deleteAnswers (idPost, idAnswer) {
+      console.log('masuk delete dengan', idAnswer)
+      // var self = this
+      axios.delete(`http://localhost:3000/questions/${idPost}/answer/${idAnswer}`, {
         headers: {
           token: this.$store.state.appToken
         }
       })
       .then(data => {
         console.log(data)
-        self.jawaban = ''
-        this.$store.dispatch('getDetailQuestion', id)
+        if (data.data === 'berhasil') {
+          this.$store.dispatch('getDetailQuestion', idPost)
+        }
       })
     }
   },
@@ -85,7 +105,6 @@ export default {
     }
   },
   created () {
-
   }
 }
 </script>

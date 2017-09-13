@@ -36,8 +36,15 @@ function insertData(req,res) {
 }
 
 function getOneQuestion(req, res) {
-  question.findOne({_id:req.params.id}).populate('answers').populate('author')
+  question.findOne({_id:req.params.id}).populate({
+    path: 'answers',
+    populate: {
+      path: 'answerAuthor',
+      model: 'User'
+    }
+  }).populate('author')
   .then(data=>{
+    console.log(data);
     res.send(data)
   })
   .catch(err => {
@@ -46,20 +53,18 @@ function getOneQuestion(req, res) {
 }
 
 function updateData(req,res){
-  // question.update({
-  //   _id : req.params.id
-  // },{
-  //   username  :req.body.username,
-  //   email :req.body.email,
-  //   password : makePassword,
-  //   key : newKey
-  // },(err,data)=>{
-  //   if(!err){
-  //     res.send(data)
-  //   }else {
-  //     res.send(error)
-  //   }
-  // })
+  question.update({
+    _id : req.params.id
+  },{
+    question: req.body.question,
+    content :req.body.content
+  },(err,data)=>{
+    if(!err){
+      res.send(data)
+    }else {
+      res.send(error)
+    }
+  })
 }
 
 function removeData(req,res) {
@@ -108,41 +113,31 @@ function addAnswers(req,res) {
 }
 
 function deleteAnswers (req, res) {
+  console.log(req.params.idquestion);
+  console.log(req.params.idanswer);
   let token = req.headers.token
   jwt.verify(token,process.env.SECRET_KEY,(err,decoded)=>{
-    question.findById(req.params.id)
+    question.findOne({_id:req.params.idquestion}).populate({
+      path: 'answers'
+    })
     .then(questionData=>{
-      answers.findById(req.body.id)
-      .then(answerData=>{
-        var answerArr = questionData.answers
-        var answersIndex = questionData.answers.indexOf(req.body.id)
-        if(answerData.author[0]==decoded._id){
-          answers.remove(req.body.id)
-          .then(removedAnswer=>{
-            // res.send(removedAnswer)
-            console.log();
-            answerArr.splice(answersIndex,1)
-            console.log(removedAnswer);
-            question.update({
-              _id: req.params.id
-            },{
-              _id: questionData._id,
-              content: questionData.content,
-              answers: questionData.answers,
-              author: questionData.author
-            })
-            .then(data=>{
-              console.log(data);
-              res.send('data has been updated with delete')
-            })
-            .catch(err=>res.send(err))
-          })
-          .catch(err=>{
-            res.send(err)
-          })
-        }
-        else {
-          res.send('You cannot delete this answers')
+      // console.log(questionData);
+      // filter yang id != answers yang  mau kita hapus
+      // console.log();
+      var arrAnswer = questionData.answers
+      console.log();
+
+      question.update({
+        _id : req.params.idquestion
+      },{
+        answers: arrAnswer.filter(answer => {
+          return answer._id != req.params.idanswer
+        })
+      },(err,data)=>{
+        if(!err){
+          res.send('berhasil')
+        }else {
+          res.send(error)
         }
       })
     })

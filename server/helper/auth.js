@@ -3,9 +3,10 @@ var jwt =require('jsonwebtoken');
 require('dotenv').config();
 
 function authentikasi(req,res,next) {
-    console.log(req.headers.token);
+    // console.log(req.headers.token);
     var token = req.headers.token
-    if (token) {
+    // console.log('ini token', token);
+    if (token != null) {
       jwt.verify(token,process.env.SECRET_KEY,(err,decoded)=> {
         if (decoded.role == 'user') {
           return next()
